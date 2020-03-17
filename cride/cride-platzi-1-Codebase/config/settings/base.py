@@ -32,6 +32,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Users & Authenticaction
 AUTH_USER_MODEL = 'users.User'
+#REST FRAMEWORK
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES':(
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE':3,
+}
 
 # Apps
 DJANGO_APPS = [

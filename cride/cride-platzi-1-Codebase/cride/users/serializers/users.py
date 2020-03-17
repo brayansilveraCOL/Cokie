@@ -69,7 +69,7 @@ class UserSignupSerializer(serializers.Serializer):
         msg.send()
     
     def gen_verification_token(self, user):
-        exp_date = timezone.now() + timedelta(days=1)
+        exp_date = timezone.now() + timedelta(days=3)
         payload = {
             'user': user.username,
             'exp': int(exp_date.timestamp()),
@@ -96,3 +96,23 @@ class UserLoginSerializer(serializers.Serializer):
         #Generar Token
         token, created = Token.objects.get_or_create(user=self.context['user'])
         return self.context['user'], token.key
+
+class AccountVerificationSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    def validate_token(self, data):
+        try:
+            payload = jwt.decode(data, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise serializers.ValidationError('Link expiro.')
+        except jwt.PyJWTError:
+            raise serializers.ValidationError('Invalid token1')
+        if payload['type'] !=  'email_confirmation':
+            raise serializers.ValidationError('Invalid token2')
+        self.context['payload'] = payload
+        return data
+    def save(self):
+        payload = self.context['payload']
+        user = User.objects.get(username=payload['user'])
+        user.is_verified =True
+        user.save()

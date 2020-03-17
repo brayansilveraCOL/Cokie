@@ -8,6 +8,11 @@ class Circle(UtilsModel):
     slug_name = models.SlugField(unique=True, max_length=40)
     about = models.CharField('circle description', max_length=255)
     picture = models.ImageField(upload_to='pharma/pictures', blank=True, null=True)
+    members = models.ManyToManyField(
+        "users.User", 
+        through='pharma.membership',
+        through_fields=('circle', 'user')
+    )
     rides_offered = models.PositiveIntegerField(default=0)
     rides_taken = models.PositiveIntegerField(default=0)
     verified = models.BooleanField(
