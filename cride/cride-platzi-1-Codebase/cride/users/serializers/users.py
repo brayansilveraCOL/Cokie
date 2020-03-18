@@ -10,12 +10,13 @@ from django.utils import timezone
 from datetime import timedelta
 import jwt
 from django.conf import settings
+from cride.users.serializers.profiles import ProfileModelSerializer
 
 class UserModelSerializer(serializers.ModelSerializer):
-
+    profile = ProfileModelSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['email', 'username', 'phone']
+        fields = ['email', 'username', 'phone', 'profile']
         
 class UserSignupSerializer(serializers.Serializer):
     #User signup Serializer
@@ -51,7 +52,7 @@ class UserSignupSerializer(serializers.Serializer):
     
     def create(self, data):
         data.pop('password_confirmation')
-        user = User.objects.create_user(**data, is_verified=False)
+        user = User.objects.create_user(**data, is_verified=False, is_client=True) #Cambios clase 35 solo is client
         Profile.objects.create(user=user)
         self.send_confirmation_email(user)
         return user

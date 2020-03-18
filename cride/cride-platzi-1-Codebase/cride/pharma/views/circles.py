@@ -7,7 +7,6 @@ from cride.pharma.models import Circle, Membership
 from cride.pharma.serializers.circles import CircleModelSerializer
 from cride.pharma.permissions.circles import IsCircleAdmin
 
-
 class CircleViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
@@ -15,7 +14,7 @@ class CircleViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin):
     ##queryset = Circle.objects.all() listar sin condicion
     serializer_class = CircleModelSerializer    
-
+    ##lookup_field = 'slug_name' se utiliza para buscar por param en url
 
     def get_queryset(self):
         ## listar con parametros de busqueda
