@@ -7,7 +7,7 @@ class Membership(UtilsModel):
     circle = models.ForeignKey("pharma.Circle", on_delete=models.CASCADE)
     is_admin = models.BooleanField(
         'circle admin',
-        help_text="Circle admin can update the circls data manage its members"
+        help_text="Circle admin can update the circls data manage its members"    
     )
     #invitaciones
     used_invitations = models.PositiveIntegerField(default=0)

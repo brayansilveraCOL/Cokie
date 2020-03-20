@@ -14,7 +14,7 @@ class CircleViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin):
     ##queryset = Circle.objects.all() listar sin condicion
     serializer_class = CircleModelSerializer    
-    ##lookup_field = 'slug_name' se utiliza para buscar por param en url
+    lookup_field = 'slug_name' #se utiliza para buscar por param en url
 
     def get_queryset(self):
         ## listar con parametros de busqueda

@@ -81,16 +81,18 @@ class UserViewSet(mixins.RetrieveModelMixin,
         return Response(data)#item clase #36
     def retrieve(self, request, *args, **kwargs):#Cambios clase 35
         #Add extra data to the response
+        
         response = super(UserViewSet, self).retrieve(request, *args, **kwargs)#Cambios clase 35
         circles = Circle.objects.filter(#Cambios clase 35
             members=request.user,
             membership__is_active=True
         )
-        data = {#Cambios clase 35
+        data = {#Cambios clase 35 ###Bug Salen los circulos de la persona logueada al consultar otra persona desinta
             'user': response.data,
             'circles': CircleModelSerializer(circles, many=True).data
         }
         response.data = data#Cambios clase 35
+      
         return response#Cambios clase 35
 
 """

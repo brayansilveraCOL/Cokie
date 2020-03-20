@@ -1,10 +1,18 @@
 # Circle membership views
 from cride.pharma.models import Circle
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, status
 from rest_framework.generics import get_object_or_404
-from cride.pharma.serializers.memberships import MembershipModelSerializer
+from cride.pharma.serializers.memberships import MembershipModelSerializer, AddMemberSerializer
 from cride.pharma.models.membership import Membership
-class MembershipViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+from cride.pharma.models.invitations import Invitation
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated
+)
+from cride.pharma.permissions.memberships import IsActiveCircleMember, IsAdminOrMembershipOwner, IsSelfMember
+class MembershipViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.CreateModelMixin):
     #Circle Member ship view set
     serializer_class = MembershipModelSerializer
     def dispatch(self, request, *args, **kwargs):
@@ -15,11 +23,77 @@ class MembershipViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             slug_name=slug_name
         )
         return super(MembershipViewSet, self).dispatch(request, *args, **kwargs)
+    def get_permissions(self):
+        permissions = [IsAuthenticated]
+        if self.action != 'create':
+            permissions.append(IsActiveCircleMember)
+        if self.action == 'invitations':
+            permissions.append(IsSelfMember)
+        #if self.action == ['destroy']:
+         #   permissions = [IsAdminOrMembershipOwner]
+        return[p() for p in permissions]
+    
     def get_queryset(self):
         #Return circle Members
         return Membership.objects.filter(
             circle=self.circle,
             is_active=True
         )
+    def get_object(self):
+        #return The circle member by using the users username
+        ##import pdb; pdb.set_trace() para hacer debug de self.args or self.kwargs
+        return get_object_or_404(
+            Membership,
+            user__username=self.kwargs['pk'],
+            circle=self.circle,
+            is_active=True
+        )
+    def perfom_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
     
+    @action(detail=True, methods=['get'])
+    def invitations(self, request, *args, **kwargs):
+       """Retrieve a members inivtations breakdown
+
+       will return a list containing all the members that have
+       used its invitations and another list containing the
+       invitations that havent being used yet
+       """ 
+       member = self.get_object()
+       invited_members = Membership.objects.filter(
+           circle=self.circle,
+           inivited_by=request.user,
+           is_active=True
+       )
+       unused_invitation = Invitation.objects.filter(
+           circle = self.circle,
+           issued_by=request.user,
+           used=False
+       ).values_list('code')
+       diff = member.remaining_invitations - len(unused_invitation)
+       invitations = [x[0] for x in unused_invitation]
+       for i in range(0, diff):
+           invitations.append(
+               Invitation.objects.create(
+                   issued_by=request.user,
+                   circle=self.circle
+               ).code
+           )
+       data = {
+           'used_invitations': MembershipModelSerializer(invited_members, many=True).data,
+           'invitations': invitations
+       }
+       return Response(data)
+    def create(self, request, *args, **kwargs):
+        #Handle member creation from invitation code
+        serializer = AddMemberSerializer(
+            data=request.data,
+            context={'circle': self.circle, 'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        member = serializer.save()
+
+        data = self.get_serializer(member).data
+        return Response(data, status=status.HTTP_201_CREATED)   
     
