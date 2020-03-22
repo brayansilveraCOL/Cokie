@@ -3,7 +3,8 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from cride.pharma.models import Circle, Membership
-
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from cride.pharma.serializers.circles import CircleModelSerializer
 from cride.pharma.permissions.circles import IsCircleAdmin
 
@@ -15,7 +16,11 @@ class CircleViewSet(mixins.CreateModelMixin,
     ##queryset = Circle.objects.all() listar sin condicion
     serializer_class = CircleModelSerializer    
     lookup_field = 'slug_name' #se utiliza para buscar por param en url
-
+    #Filters
+    filter_backends = (SearchFilter, OrderingFilter, DjangoFilterBackend)
+    ordering_fields = ('rides_offered', 'rides_taken', 'name', 'created', 'member_limit')
+    ordering = ('-rides_offered', '-rides_taken')#'members__count',  Bug
+    filter_fields = ('verified', 'is_limited')
     def get_queryset(self):
         ## listar con parametros de busqueda
         queryset =  Circle.objects.all()

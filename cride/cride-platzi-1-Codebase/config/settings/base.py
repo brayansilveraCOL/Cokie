@@ -57,11 +57,13 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'django_filters'
 ]
 LOCAL_APPS = [
      'cride.users.apps.UsersAppConfig',
      'cride.pharma.apps.PharmaAppConfig',
+     'cride.rides.apps.RidesAppConfig'
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 

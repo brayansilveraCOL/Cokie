@@ -10,7 +10,8 @@ class ProfileModelSerializer(serializers.ModelSerializer):
         fields = [
             'picture',
             'biography',
-            'reputation'
+            'reputation',
+            'rides_offered'
         ]
         ready_only_fields = [
              'biography',

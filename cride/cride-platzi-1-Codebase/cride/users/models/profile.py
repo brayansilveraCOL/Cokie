@@ -16,5 +16,7 @@ class Profile(UtilsModel):
         default=5.0,
         help_text="Users Reputation"
     )
+    rides_taken = models.PositiveIntegerField(default=0)
+    rides_offered = models.PositiveIntegerField(default=0)
     def __str__(self):
         return str(self.user)
