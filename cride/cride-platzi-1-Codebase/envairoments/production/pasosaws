@@ -1,0 +1,1 @@
+Crear la instancia y con la instancia crea un nuevo rol IAM hacer os pasos darle permisos totales de S3aws descargar la llave .pem que es con la que hacemos la conexion luego de esto se crea un S3 bucket se personaliza el nombre y se coloca en la variable en el .django
