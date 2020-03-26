@@ -1,0 +1,14 @@
+DJANGO_SECRET_KEY=Xh:v%f_i-WDi~jS*&j(Lyd&|r&u<3l9:q-Pj-)XJ+Zl$GQ5Cnm
+DJANGO_ADMIN_URL=admin
+DJANGO_SETTINGS_MODULE=config.settings.production
+#mail gun
+MAILGUN_API_KEY=631b7a4d7aa8e017debd66626ad4be44
+MAILGUN_DOMAIN=sandboxf8b868b7f5f04aa1ba078855c2177eee.mailgun.org
+# Redis
+REDIS_URL=redis://redis:6379/0
+
+# Flower
+CELERY_FLOWER_USER=AkSCzUUkrubMopHkMlHHIiFnUzKhIidG
+CELERY_FLOWER_PASSWORD=jspxQGdwrs9VbGLmn5FmXRAGqNt5D6osRgqggNJl1JgcdcCYZdCf7Ch0jcgG0nH7
+#AWS
+DJANGO_AWS_STORAGE_BUCKET_NAME=comparteride2
