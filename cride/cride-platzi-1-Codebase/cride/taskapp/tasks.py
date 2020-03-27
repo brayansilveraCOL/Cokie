@@ -23,9 +23,6 @@ def gen_verification_token(user):
 @task(name='send_confirmation_email', max_retries=3)
 def send_confirmation_email(user_pk):
     #Send account verification link to given user
-    for i in range(30):
-        time.sleep(1),
-        print("Sleeping", str(i+1))
     user = User.objects.get(pk=user_pk)
     verification_token = gen_verification_token(user)
     subject = 'Welcome @{}! verify your account to start using Comparte Ride' .format(user.username)
